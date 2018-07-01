@@ -1,0 +1,33 @@
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+
+.picture_wrapper {
+	position: absolute;
+	display: flex;
+	background-color: #99CCFF;
+}
+
+.picture_button_wrapper {}
+
+.picture_button_wrapper.transverse {
+	position: absolute;
+	right: 0;
+	height: 100%;
+	    display: flex;
+}
+
+.picture_button {
+	background-image: url(../img/picture_button.png);
+	background-repeat: no-repeat;
+	background-position: center;
+	width: 60px;
+	height: 60px;
+	font-size: 12px;
+	background-size: 50px 50px;
+	border: 1px solid #99FFFF;
+	border-radius: 60px;
+	margin: auto;
+}

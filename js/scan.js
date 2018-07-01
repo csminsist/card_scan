@@ -52,8 +52,6 @@
 				this.$pictureSetting.height = w;
 			}
 
-			let cameraSetting = getCameraSettingArgs(this.$pictureSetting);
-
 			let _picture_wrapper_id = "picture_wrapper_" + (Math.random() * 1000);
 			let _video_id = "video_" + (Math.random() * 1000);
 			let _canvas_id = "canvas_" + (Math.random() * 1000);
@@ -104,14 +102,9 @@
 			picture_button.className = PICTURE_BUTTON_CLASS;
 
 			button_wrapper.appendChild(picture_button);
-
+			let context = this;
 			picture_button.addEventListener("click", function() {
-				this.$context.drawImage(this.$video, 100, 50, 380, 220, 0, 0, 380, 220);
-				var d = this.$canvas.toDataURL("image/png", 1);
-				if(typeof(this.getPic) == "function") {
-					let args = [d];
-					this.getPic.apply(this, args);
-				}
+				context.draw.apply(context);
 			}, false);
 
 			//			content_wrapper.style = {
@@ -158,22 +151,10 @@
 			getMedia(video, sucCallback || function() {}, errorCallback || function() {});
 		}
 
-		setType(width, height, picture_type) {
-			if(typeof(width) === "number") {
-				this.$default_wh.width = width;
-			}
-			if(typeof(height) === "number") {
-				this.$default_wh.height = height;
-			}
-			if(typeof(picture_type) === "number" && (picture_type === 0 || picture_type === 1)) {
-				this.pictureSetting.picture_type = picture_type;
-			}
-		}
-
-		load(stream) {
-			this.$video.srcObject = stream;
-			this.$video.play();
-		}
+		//		load(stream) {
+		//			this.$video.srcObject = stream;
+		//			this.$video.play();
+		//		}
 		pause() {
 			this.$video.pause();
 		}
@@ -186,20 +167,43 @@
 				throw new Error("scan not init");
 			} else {
 				wrapper.style.display = "flex";
+				wrapper.style.zIndex = 9999;
+			}
+		}
+		draw() {
+			this.$video.pause();
+			this.$context.drawImage(this.$video, 100, 50, 380, 220, 0, 0, 380, 220);
+			var d = this.$canvas.toDataURL("image/png", 1);
+			if(typeof(this.getPic) == "function") {
+				let args = [d];
+				this.getPic.apply(this, args);
 			}
 		}
 
 	}
 
-	Scan.prototype.start = function(sucCallback, errorCallback) {
+	Scan.prototype.load = function(stream) {
+		this.$video.srcObject = stream;
+		this.$video.play();
+	}
+	Scan.prototype.restart = function() {
+		this.$video.play();
+	}
 
-		this.show
+	Scan.prototype.start = function() {
 
+		this.show();
+		let context = this;
 		this.getMedia({
-				video: this.$default_wh
+				video: this.$pictureSetting
 			},
-			success,
-			error);
+			function(stream) {
+				let args = [stream];
+				context.load.apply(context, args)
+			},
+			function(error) {
+				console.log('访问用户媒体设备失败' + error.name, error.message);
+			});
 	}
 	Scan.prototype.getPicture = function() {
 		console.log(this.$video)

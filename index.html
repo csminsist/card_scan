@@ -22,51 +22,21 @@
 		<button id="button" onclick="stopCamera()">暂停</button>
 		<button id="button" onclick="continueCamera()">继续</button>
 		<button id="button" onclick="getPicture()">拍照</button>-->
+		
+		<img id="image" src="" width="320" height="200"/>
 	</body>
 	<script type="text/javascript" src="js/scan.js"></script>
 	<script>
 		let scan = new Scan({
 			picture_type: 1
+		}, function(data) {
+			console.log(data)
+			document.getElementById("image").src=data;
+			setTimeout(function() {
+				scan.restart();
+			}, 2000);
 		});
-
-		function error(error) {
-			console.log('访问用户媒体设备失败${error.name}, ${error.message}');
-		}
-
-		function success(stream) {
-			//兼容webkit核心浏览器
-			var CompatibleURL = window.URL || window.webkitURL;
-			//将视频流设置为video元素的源
-			//video.src = CompatibleURL.createObjectURL(stream);
-			scan.load(stream);
-
-		}
-
-		function cameraClick() {
-			scan.start({
-				video: {
-					width: 480,
-					height: 320
-				}
-			});
-		}
-
-		function stopCamera() {
-			scan.pause();
-		}
-
-		function continueCamera() {
-			scan.continue();
-		}
-
-		function getCamera() {
-			scan.continue();
-		}
-
-		function getPicture() {
-			scan.pause();
-			scan.getPicture();
-		}
+		scan.start();
 	</script>
 
 </html>
